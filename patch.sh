@@ -61,15 +61,49 @@ if [[ -z "$NEW_SALT" && -z "$EXTRA_ARGS" ]]; then
     echo "  🐹 capybara   🌵 cactus     🤖 robot      🐰 rabbit"
     echo "  🍄 mushroom   🐈 chonk"
     echo ""
-    read -p "What pet do you want? Type the name: " CHOSEN_SPECIES
+    read -p "What pet do you want? Type the name: " INPUT_SPECIES
 
-    # Validate
-    VALID_SPECIES="duck goose blob cat dragon octopus owl penguin turtle snail ghost axolotl capybara cactus robot rabbit mushroom chonk"
-    CHOSEN_SPECIES=$(echo "$CHOSEN_SPECIES" | tr '[:upper:]' '[:lower:]' | xargs)
-    if [[ ! " $VALID_SPECIES " =~ " $CHOSEN_SPECIES " ]]; then
-        echo -e "${RED}Unknown pet: $CHOSEN_SPECIES${NC}"
-        exit 1
-    fi
+    # Normalize: lowercase, trim
+    INPUT_SPECIES=$(echo "$INPUT_SPECIES" | tr '[:upper:]' '[:lower:]' | xargs)
+
+    # Map aliases, Chinese names, partial matches, common typos
+    case "$INPUT_SPECIES" in
+        duck|鸭|鸭子|小黄鸭)           CHOSEN_SPECIES="duck" ;;
+        goose|鹅|大鹅|鹅鹅)            CHOSEN_SPECIES="goose" ;;
+        blob|水滴|果冻|史莱姆|slime)    CHOSEN_SPECIES="blob" ;;
+        cat|猫|猫咪|小猫|喵)            CHOSEN_SPECIES="cat" ;;
+        dragon|龙|恐龙|小龙)            CHOSEN_SPECIES="dragon" ;;
+        octopus|章鱼|八爪鱼)            CHOSEN_SPECIES="octopus" ;;
+        owl|猫头鹰|夜猫子)              CHOSEN_SPECIES="owl" ;;
+        penguin|企鹅|小企鹅)            CHOSEN_SPECIES="penguin" ;;
+        turtle|乌龟|龟|海龟)            CHOSEN_SPECIES="turtle" ;;
+        snail|蜗牛|小蜗牛)              CHOSEN_SPECIES="snail" ;;
+        ghost|幽灵|鬼|👻)              CHOSEN_SPECIES="ghost" ;;
+        axolotl|六角恐龙|蝾螈|美西螈)   CHOSEN_SPECIES="axolotl" ;;
+        capybara|卡皮巴拉|水豚|🐹)      CHOSEN_SPECIES="capybara" ;;
+        cactus|仙人掌|🌵)              CHOSEN_SPECIES="cactus" ;;
+        robot|机器人|🤖)               CHOSEN_SPECIES="robot" ;;
+        rabbit|兔|兔子|小兔子|🐰)       CHOSEN_SPECIES="rabbit" ;;
+        mushroom|蘑菇|🍄)              CHOSEN_SPECIES="mushroom" ;;
+        chonk|胖猫|肥猫|橘猫)           CHOSEN_SPECIES="chonk" ;;
+        *)
+            # Fuzzy: check if input is a substring of any species
+            CHOSEN_SPECIES=""
+            for sp in duck goose blob cat dragon octopus owl penguin turtle snail ghost axolotl capybara cactus robot rabbit mushroom chonk; do
+                if [[ "$sp" == *"$INPUT_SPECIES"* || "$INPUT_SPECIES" == *"$sp"* ]]; then
+                    CHOSEN_SPECIES="$sp"
+                    break
+                fi
+            done
+            if [[ -z "$CHOSEN_SPECIES" ]]; then
+                echo -e "${RED}Can't find a pet matching: $INPUT_SPECIES${NC}"
+                echo "Available: duck goose blob cat dragon octopus owl penguin turtle snail ghost axolotl capybara cactus robot rabbit mushroom chonk"
+                exit 1
+            fi
+            ;;
+    esac
+
+    echo -e "   → Got it: ${GREEN}$CHOSEN_SPECIES${NC}"
 
     EXTRA_ARGS="--species $CHOSEN_SPECIES --shiny"
     echo ""
