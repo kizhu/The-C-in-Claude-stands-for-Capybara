@@ -107,9 +107,9 @@ if [[ -z "$NEW_SALT" && -z "$EXTRA_ARGS" ]]; then
 
     echo -e "   → Got it: ${GREEN}$CHOSEN_SPECIES${NC}"
 
-    EXTRA_ARGS="--species $CHOSEN_SPECIES --shiny"
+    EXTRA_ARGS="--species $CHOSEN_SPECIES --shiny --rarity legendary"
     echo ""
-    echo -e "   → Searching for a ✨ shiny $CHOSEN_SPECIES for you..."
+    echo -e "   → Searching for a ✨ LEGENDARY SHINY $CHOSEN_SPECIES for you..."
     echo ""
 fi
 
