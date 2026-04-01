@@ -53,47 +53,27 @@ if [[ -z "$NEW_SALT" && -z "$EXTRA_ARGS" ]]; then
     echo ""
     echo -e "${YELLOW}🐹 Buddy Patch — Change your Claude Code pet${NC}"
     echo ""
-
-    # Species selection
-    echo -e "${CYAN}Pick a species:${NC}"
-    SPECIES_LIST=(duck goose blob cat dragon octopus owl penguin turtle snail ghost axolotl capybara cactus robot rabbit mushroom chonk)
-    SPECIES_EMOJI=("🦆" "🪿" "🫧" "🐱" "🐉" "🐙" "🦉" "🐧" "🐢" "🐌" "👻" "🦎" "🐹" "🌵" "🤖" "🐰" "🍄" "🐈")
-    for i in "${!SPECIES_LIST[@]}"; do
-        printf "  %2d) %s %s\n" $((i+1)) "${SPECIES_EMOJI[$i]}" "${SPECIES_LIST[$i]}"
-    done
+    echo "Available pets:"
     echo ""
-    read -p "Enter number (1-18): " SPECIES_NUM
-    if [[ "$SPECIES_NUM" -ge 1 && "$SPECIES_NUM" -le 18 ]] 2>/dev/null; then
-        EXTRA_ARGS="$EXTRA_ARGS --species ${SPECIES_LIST[$((SPECIES_NUM-1))]}"
-        echo -e "   → ${SPECIES_EMOJI[$((SPECIES_NUM-1))]} ${SPECIES_LIST[$((SPECIES_NUM-1))]}"
-    else
-        echo -e "${RED}Invalid choice${NC}"; exit 1
+    echo "  🦆 duck       🪿 goose      🫧 blob       🐱 cat"
+    echo "  🐉 dragon     🐙 octopus    🦉 owl        🐧 penguin"
+    echo "  🐢 turtle     🐌 snail      👻 ghost      🦎 axolotl"
+    echo "  🐹 capybara   🌵 cactus     🤖 robot      🐰 rabbit"
+    echo "  🍄 mushroom   🐈 chonk"
+    echo ""
+    read -p "What pet do you want? Type the name: " CHOSEN_SPECIES
+
+    # Validate
+    VALID_SPECIES="duck goose blob cat dragon octopus owl penguin turtle snail ghost axolotl capybara cactus robot rabbit mushroom chonk"
+    CHOSEN_SPECIES=$(echo "$CHOSEN_SPECIES" | tr '[:upper:]' '[:lower:]' | xargs)
+    if [[ ! " $VALID_SPECIES " =~ " $CHOSEN_SPECIES " ]]; then
+        echo -e "${RED}Unknown pet: $CHOSEN_SPECIES${NC}"
+        exit 1
     fi
 
-    # Rarity selection
+    EXTRA_ARGS="--species $CHOSEN_SPECIES"
     echo ""
-    echo -e "${CYAN}Minimum rarity:${NC}"
-    echo "  1) ★      common     (easiest)"
-    echo "  2) ★★     uncommon"
-    echo "  3) ★★★    rare"
-    echo "  4) ★★★★   epic"
-    echo "  5) ★★★★★  legendary  (hardest to find)"
-    echo ""
-    read -p "Enter number (1-5, default 1): " RARITY_NUM
-    RARITY_NAMES=(common uncommon rare epic legendary)
-    if [[ -n "$RARITY_NUM" && "$RARITY_NUM" -ge 2 && "$RARITY_NUM" -le 5 ]] 2>/dev/null; then
-        EXTRA_ARGS="$EXTRA_ARGS --rarity ${RARITY_NAMES[$((RARITY_NUM-1))]}"
-        echo -e "   → ${RARITY_NAMES[$((RARITY_NUM-1))]}"
-    fi
-
-    # Shiny
-    echo ""
-    read -p "$(echo -e "${CYAN}Shiny? ✨ (y/N):${NC} ")" SHINY_CHOICE
-    if [[ "$SHINY_CHOICE" == "y" || "$SHINY_CHOICE" == "Y" ]]; then
-        EXTRA_ARGS="$EXTRA_ARGS --shiny"
-        echo "   → ✨ shiny"
-    fi
-
+    echo -e "   → Searching for the best $CHOSEN_SPECIES for you..."
     echo ""
 fi
 
