@@ -161,7 +161,7 @@ ensure_bun() {
         echo "$HOME/.bun/bin/bun"
         return 0
     fi
-    echo -e "${CYAN}📦 Installing Bun (needed for hash matching)...${NC}"
+    echo -e "${CYAN}📦 Installing Bun (needed for hash matching)...${NC}" >&2
     curl -fsSL https://bun.sh/install | bash &>/dev/null
     if [[ -f "$HOME/.bun/bin/bun" ]]; then
         echo "$HOME/.bun/bin/bun"
